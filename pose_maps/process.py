@@ -1,6 +1,8 @@
 import pyautogui
+pyautogui.PAUSE = 0.01
 import mediapipe as mp
 from typing import NamedTuple
+import time
 
 class Pose2MouseMovement:
     def __init__(self) -> None:
@@ -47,16 +49,16 @@ class Pose2MouseMovement:
                 threshold_distance = ((thumb_ip.x - thumb_tip.x) ** 2 + 
                                         (thumb_ip.y - thumb_tip.y) ** 2) ** 0.5 / 2
                 if thumb_index_distance < threshold_distance and middle_distance > threshold_distance:
-                    pyautogui.moveTo(smoothed_x, smoothed_y)
+                    pyautogui.moveTo(smoothed_x, smoothed_y, duration=0.01)
                     pyautogui.click()
                 elif thumb_index_distance > threshold_distance and middle_distance < threshold_distance: 
-                    pyautogui.moveTo(smoothed_x, smoothed_y)
+                    pyautogui.moveTo(smoothed_x, smoothed_y, duration=0.01)
                     pyautogui.rightClick()
                 elif thumb_index_distance < threshold_distance and middle_distance < threshold_distance:  
                     pyautogui.dragTo(smoothed_x, smoothed_y, button="left")
                     pyautogui.click()
                 else:
-                    pyautogui.moveTo(smoothed_x, smoothed_y)
+                    pyautogui.moveTo(smoothed_x, smoothed_y, duration=0.01)
                 break
         return {
             "status": "SUCCESS"
