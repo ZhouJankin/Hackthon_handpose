@@ -1,5 +1,5 @@
 import pyautogui
-pyautogui.PAUSE = 0.01
+pyautogui.PAUSE = 0.005
 import mediapipe as mp
 from typing import NamedTuple
 import time
@@ -18,7 +18,9 @@ class Pose2MouseMovement:
     def classify(self, results: NamedTuple):
         if results.multi_hand_landmarks:
             for hand_landmarks in results.multi_hand_landmarks:
-            
+
+                # 获取手掌根坐标
+                wrist = hand_landmarks.landmark[self.mp_hands.HandLandmark.WRIST]
                 # 获取大拇指的坐标
                 thumb_tip = hand_landmarks.landmark[self.mp_hands.HandLandmark.THUMB_TIP]
                 # 获取大拇指第二节坐标
@@ -28,8 +30,14 @@ class Pose2MouseMovement:
                 # 获取中指坐标
                 middle_tip = hand_landmarks.landmark[self.mp_hands.HandLandmark.MIDDLE_FINGER_TIP]
 
-                x = thumb_tip.x
-                y = thumb_tip.y
+                # x = thumb_tip.x
+                # y = thumb_tip.y
+
+                # ROI区域减小为一半，X轴取(0.25~0.75) Y轴取(0.5~1.0)并翻转
+                x = (wrist.x - 0.25) / (0.75 - 0.25)
+                y = (1.0 - 2 * wrist.y)
+                print("x:",x)
+                print("y:",y)
 
                 # 将手部坐标转换为屏幕坐标
                 screen_x = max(0, min(self.screen_width - int(x * self.screen_width * 4 / 3), self.screen_width))
@@ -38,6 +46,11 @@ class Pose2MouseMovement:
                 # 平滑处理 (EMA)
                 smoothed_x = self.alpha * screen_x + (1 - self.alpha) * self.prev_x
                 smoothed_y = self.alpha * screen_y + (1 - self.alpha) * self.prev_y
+
+                # 过滤微动
+                if abs(smoothed_x - self.prev_x) < 5 and abs(smoothed_y - self.prev_y) < 5:
+                    smoothed_x = self.prev_x
+                    smoothed_y = self.prev_y
 
                 # 更新历史坐标
                 self.prev_x, self.prev_y = smoothed_x, smoothed_y

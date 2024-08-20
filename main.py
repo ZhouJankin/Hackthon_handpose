@@ -10,14 +10,13 @@ def main():
     image_to_hand_pose = I2HModel()
     pose_to_mouse_move = P2MProcess()
     
-    cap = cv2.VideoCapture(0)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)  # 
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)  #  
+    cap = cv2.VideoCapture(4)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1080)  #
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)  #
     while cap.isOpened():
         ret, frame = cap.read()
         if not ret:
             break
-        start_time = time.perf_counter()
         # 将BGR图像转换为RGB
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         hand_pose = image_to_hand_pose.process(image)
@@ -29,8 +28,6 @@ def main():
                 break
         
         message = pose_to_mouse_move.classify(hand_pose)
-        end_time = time.perf_counter()
-        print(f"move mouse执行时间：{end_time - start_time} 秒")
     if visualize:
         cv2.destroyAllWindows()
 
