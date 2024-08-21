@@ -6,7 +6,7 @@ class Image2HandPose:
     def __init__(self) -> None:
         self.mp_hands = mp.solutions.hands
         self.hands = self.mp_hands.Hands(
-            max_num_hands=1,
+            max_num_hands=2,
             min_tracking_confidence=0.5
         )
         self.mp_drawing = mp.solutions.drawing_utils
