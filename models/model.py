@@ -19,4 +19,5 @@ class Image2HandPose:
         if results.multi_hand_landmarks:
             for hand_landmarks in results.multi_hand_landmarks:
                 self.mp_drawing.draw_landmarks(image, hand_landmarks, self.mp_hands.HAND_CONNECTIONS)
-        cv2.imshow('Hand Gesture to Replace Mouse', image)
+        cv2.namedWindow('Hand Gesture to Replace Mouse', cv2.WINDOW_NORMAL)
+        cv2.imshow('Hand Gesture to Replace Mouse', image[::4, ::4])

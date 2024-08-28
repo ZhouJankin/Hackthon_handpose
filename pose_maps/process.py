@@ -1,5 +1,6 @@
 import pyautogui
 pyautogui.PAUSE = 0.005
+pyautogui.FAILSAFE = False
 import mediapipe as mp
 from typing import NamedTuple
 import time
@@ -16,6 +17,7 @@ class Pose2MouseMovement:
         self.prev_x, self.prev_y = 0, 0
 
     def classify(self, results: NamedTuple):
+        sleep_flag = False
         if results.multi_hand_landmarks:
             left_hand_landmarks = None
             right_hand_landmarks = None
@@ -83,8 +85,13 @@ class Pose2MouseMovement:
 
                     if thumb_index_distance < threshold_distance and middle_distance > threshold_distance:
                         pyautogui.click()
+                        time.sleep(0.2)
+                        sleep_flag = True
                     elif thumb_index_distance > threshold_distance and middle_distance < threshold_distance:
-                        pyautogui.rightClick()
+                        # pyautogui.rightClick()
+                        pyautogui.press('space')
+                        time.sleep(0.2)
+                        sleep_flag = True
                     elif thumb_index_distance < threshold_distance and middle_distance < threshold_distance:
                         if pass_right_wrist_x is not None and pass_right_wrist_y is not None:
                             pyautogui.dragTo(pass_right_wrist_x, pass_right_wrist_y, button="left")
